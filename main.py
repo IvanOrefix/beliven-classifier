@@ -42,36 +42,30 @@ def create_model():
     pool0 = MaxPooling2D(pool_size=(2, 2))(conv0)
     pool0 = Dropout(0.4)(pool0)
 
-    conv1 = Conv2D(512, 3, padding='same')(pool0)
+    conv1 = Conv2D(256, 3, padding='same')(pool0)
     conv1 = LeakyReLU()(conv1)
     conv1 = BatchNormalization()(conv1)
     pool1 = MaxPooling2D(pool_size=(2, 2))(conv1)
     pool1 = Dropout(0.4)(pool1)
 
-    conv2 = Conv2D(256, 3, padding='same')(pool1)
+    conv2 = Conv2D(128, 3, padding='same')(pool1)
     conv2 = LeakyReLU()(conv2)
     conv2 = BatchNormalization()(conv2)
     pool2 = MaxPooling2D(pool_size=(2, 2))(conv2)
     pool2 = Dropout(0.4)(pool2)
 
-    conv3 = Conv2D(128, 3, padding='same')(pool2)
+    conv3 = Conv2D(64, 3, padding='same')(pool2)
     conv3 = LeakyReLU()(conv3)
     conv3 = BatchNormalization()(conv3)
     pool3 = MaxPooling2D(pool_size=(2, 2))(conv3)
     pool3 = Dropout(0.4)(pool3)
 
-    conv4 = Conv2D(64, 3, padding='same')(pool3)
-    conv4 = LeakyReLU()(conv4)
-    conv4 = BatchNormalization()(conv4)
-    pool4 = MaxPooling2D(pool_size=(2, 2))(conv4)
-    pool4 = Dropout(0.5)(pool4)
-
-    dense = Flatten()(pool4)
+    dense = Flatten()(pool3)
     output = Dense(1,activation='sigmoid')(dense)
 
     model = Model(inputs=inputs, outputs=output)
     model.summary()
-    model.compile(optimizer=Adam(learning_rate=0.0005), loss='binary_crossentropy', metrics=['accuracy', tf.keras.metrics.Precision(), tf.keras.metrics.Recall()])
+    model.compile(optimizer=Adam(learning_rate=0.001), loss='binary_crossentropy', metrics=['accuracy', tf.keras.metrics.Precision(), tf.keras.metrics.Recall()])
 
     return model
 
@@ -85,7 +79,7 @@ training_set = training_set.skip(n_val_samples)
 
 model = create_model()
 
-history = model.fit(training_set, validation_data=val_set, epochs=30)
+history = model.fit(training_set, validation_data=val_set, epochs=25)
 loss, accuracy, precision, recall = model.evaluate(test_set)
 
 f1_score = 2 * (precision * recall) / (precision + recall)
